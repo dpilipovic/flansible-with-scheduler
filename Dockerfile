@@ -27,6 +27,7 @@ RUN apk add --no-cache --virtual .build-deps \
     git \
     openssl \
     tzdata \
+    redis \
     # OS tools we also need
     jq \
     tree
