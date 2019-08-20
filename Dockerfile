@@ -136,8 +136,6 @@ RUN mkdir -p /etc/nginx/certs && \
 
 # Few more small changes for Docker Alpine release to function a ok. tzlocal python library requires /etc/localtime and we want alpine version of startup script which solves docker network routing
 RUN cp -r -f /usr/share/zoneinfo/UTC /etc/localtime && \
-    echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf && \
-    echo never > /sys/kernel/mm/transparent_hugepage/enabled && \
     cp -r -f /opt/flansible/bin/start-flansible-alpine.sh /opt/flansible/bin/start-flansible.sh &&\
     chmod u+x /opt/flansible/bin/start-flansible.sh && chmod 600 /opt/flansible/app/id_rsa && \
     chmod u+x /opt/flansible/bin/start-docker-services.sh
