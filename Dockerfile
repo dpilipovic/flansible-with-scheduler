@@ -115,10 +115,7 @@ RUN python -m ensurepip --default-pip && \
     alias pip='python -m pip'
 
 # Install requirements
-RUN cd /opt/flansible/ && \
-     su flansible && \
-     python -m venv venv && \
-     venv/bin/pip install -r requirements.txt
+RUN su - flansible -c "cd /opt/flansible/ ;  python -m venv venv ; venv/bin/pip install -r requirements.txt" 
 
 # Create self-signed certs so that nginx can start OK - If you want to use it permanently, you want to replace the CN with your own here
 RUN mkdir -p /etc/nginx/certs && \
