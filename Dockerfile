@@ -104,7 +104,7 @@ RUN  bash && \
 
 # Obtain Application code
 RUN cd /opt/ && \
-    git clone https://github.com/dpilipovic/flansible-with-scheduler.git
+    git clone https://github.com/dpilipovic/flansible-with-scheduler.git flansible
     
 # Setup Python3 and it's pip as default and create venv
 RUN python -m ensurepip --default-pip && \
