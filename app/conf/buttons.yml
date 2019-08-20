@@ -11,14 +11,14 @@
   -
         button_name: "Test"
         button_description: "Just for testing - does some harmless stuff on Test portals."
-        _cmd: "sudo /bin/ansible-playbook -i /opt/ansible/inventory.txt /opt/ansible/automated_scheduled_restarts/test/test.yml"
+        _cmd: "sudo /bin/ansible-playbook -i /opt/ansible/inventory.txt /opt/ansible/test/test.yml"
         _id: 'Test'
         api: 'True'
   -
-        button_name: "Restart Test2"
-        button_description: "Restarts Test2 portals one by one and validates application."
+        button_name: "Restart Test 2"
+        button_description: "Restarts Test 2 portals one by one and validates application."
         _cmd: "sudo /bin/ansible-playbook -i /opt/ansible/inventory.txt /opt/ansible/automated_scheduled_restarts/test2/test2-restart.yml"
-        _id: 'Test2'
+        _id: 'SSOSprint'
         api: 'True'
   -
         button_name: "Restart Prod Test"

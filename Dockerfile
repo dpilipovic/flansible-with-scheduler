@@ -26,7 +26,8 @@ RUN apk add --no-cache --virtual .build-deps \
     openrc \
     git \
     openssl \
-    tzdata
+    tzdata \
+    jw
 
 # Download nginx and sticky module sources
 RUN  mkdir -p /usr/src && \

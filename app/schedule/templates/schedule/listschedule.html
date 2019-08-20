@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css" integrity="sha384-v2Tw72dyUXeU3y4aM2Y0tBJQkGfplr39mxZqlTBDUZAb9BGoC40+rdFCG0m10lXk" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/fontawesome.css" integrity="sha384-q3jl8XQu1OpdLgGFvNRnPdj5VIlCvgsDQTQB6owSOHWlAurxul7f+JpUOVdAiJ5P" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <meta charset="utf-8">
+</head>
+<body>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <!-- <strong>Title</strong> --> {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div>
+    <nav class="navbar navbar-dark bg-dark">
+      <img src="/static/images/Logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+      <a class="navbar-brand" href="{{url_for('schedule.create_schedule')}}">Create Schedule</a>
+      <a class="navbar-brand" href="#" data-toggle="modal" id="navbar_admin_btn" value="navbar_admin_btn" data-target="#admin_modal">Admin</a>
+      <a class="navbar-brand" href="{{url_for('ui.runhistory')}}">Run History</a>
+      <a class="navbar-brand" href="{{url_for('restapi.register_api')}}">API</a>
+      <a class="navbar-brand" href="{{url_for('ui.index')}}">Home</a>
+      <a class="navbar-brand" href="{{url_for('ui.logout')}}">Logout</a>
+     </nav>
+  </div>
+
+  <br>
+
+<p>
+<h2>List of all Scheduled tasks:</h2>
+</p>
+
+<br>
+
+<div>
+<table class="table table-striped">
+     <tr class="Header">
+        <th>Task name:</th>
+        <th>Playbook ID:</th>
+        <th>User:</th>
+        <th>Email:</th>
+        <th>Notification:</th>
+        <th>Minute:</th>
+        <th>Hour:</th>
+        <th>Day:</th>
+        <th>Month:</th>
+        <th>Weekday:</th>
+        <th>Enabled:</th>
+        <th>Next Run:</th>
+
+      </tr>
+        {% for item in schedules %}
+        <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.playbook_id }}</td>
+        <td>{{ item.ldap_user }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.notify }}</td>
+        <td>{{ item.minute }}</td>
+        <td>{{ item.hour }}</td>
+        <td>{{ item.day_of_month }}</td>
+        <td>{{ item.month_of_year }}</td>
+        <td>{{ item.day_of_week }}</td>
+        <td>{{ item.is_enabled }}</td>
+        <td>{{ item.next_run }}</td>
+        <td>
+              <i class="fas fa-play" data-toggle="modal" data-target="#resumejob-modal" data-id="{{ item.id }}" title="Resume job"></i>
+        </td>
+        <td>
+             <i class="fas fa-pause" data-toggle="modal" data-target="#pausejob-modal" data-id="{{ item.id }}"  title="Pause job"></i>
+        </td>
+        <td>
+             <i class="fas fa-clock" data-toggle="modal" data-target="#reschedulejob-modal" data-id="{{ item.id }}" data-name="{{ item.name }}" data-email="{{ item.email }}" data-notify="{{ item.notify }}" data-minute="{{ item.minute }}" data-hour="{{ item.hour }}" data-day="{{ item.day_of_month }}" data-month="{{ item.month_of_year }}" data-dayofweek="{{ item.day_of_week }}" title="Reschedule job"></i>
+        </td>
+        <td>
+              <i class="fas fa-times" data-toggle="modal" data-target="#deletejob-modal" data-id="{{ item.id }}"  title="Delete job"></i>
+        </td>
+        </tr>
+       {% endfor %}
+      </tr>
+
+  </table>
+  </div>
+
+<div>
+  <nav class="navbar fixed-bottom navbar-dark bg-dark">
+    <span class="navbar-text">
+    {{ company_info }} All rights reserved.
+    </span>
+   </nav>
+</div>
+
+<!-- Modal for Resume job popup-->
+<div class="modal" tabindex="-1" role="dialog" id="resumejob-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to resume this job?</p>
+      </div>
+      <div class="modal-footer align-items-start">
+        <form action="{{ url_for('schedule.resume_job') }}" method="POST">
+        <input name="pass_resumeid" type="hidden" value="pass_value" id="hidden_resume">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <input class="btn btn-secondary" type="submit" name="submit_button" value="Confirm">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- This script allows value of id to be passed from button onclick to the resume job modal -->
+        <script>
+           $('#resumejob-modal').on('show.bs.modal', function(e) {
+           var idvalue = e.relatedTarget.dataset.id;
+           $('#hidden_resume').val(idvalue)
+           });
+        </script>
+
+        <!-- Modal for Pause job popup-->
+        <div class="modal" tabindex="-1" role="dialog" id="pausejob-modal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to pause this job?</p>
+              </div>
+              <div class="modal-footer align-items-start">
+                <form action="{{ url_for('schedule.pause_job') }}" method="POST">
+                <input name="pass_pausedid" type="hidden" value="pass_value" id="hidden_paused">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <input class="btn btn-secondary" type="submit" name="submit_button" value="Confirm">
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- This script allows value of id to be passed from button onclick to the pause job modal -->
+        <script>
+           $('#pausejob-modal').on('show.bs.modal', function(e) {
+           var idvalue = e.relatedTarget.dataset.id;
+           $('#hidden_paused').val(idvalue)
+           });
+        </script>
+
+        <!-- Modal for Reschedule Job popup-->
+        <div class="modal" tabindex="-1" role="dialog" id="reschedulejob-modal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Edit Scheduled task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                      </div>
+                      <div class="modal-footer d-flex justify-content-start">
+                        <form action="{{ url_for('schedule.reschedule_job') }}" method="POST">
+                        <input name="pass_rescheduleid" type="hidden" id="hidden_id_input">
+                        <div class="form-group">
+                        <label for="name" class="control-label">Task Name:</label>
+                        <input type="text" class="form-control" id="name" name="pass_name">
+                        </div>
+                        <div class="form-group">
+                        <label for="email" class="control-label">Email Address:</label>
+                        <input type="text" class="form-control" id="email" name="pass_email">
+                        </div>
+                        <div class="form-group">
+                        <label for="notify" class="control-label">Notify:</label>
+                        <input type="text" class="form-control" id="notify" name="pass_notify">
+                        </div>
+                        <div class="form-group">
+                        <label for="minute" class="control-label">Minute:</label>
+                        <input type="text" class="form-control" id="minute" name="pass_minute">
+                        </div>
+                        <div class="form-group">
+                        <label for="hour" class="control-label">Hour:</label>
+                        <input type="text" class="form-control" id="hour" name="pass_hour">
+                        </div>
+                        <div class="form-group">
+                        <label for="day" class="control-label">Day of Month:</label>
+                        <input type="text" class="form-control" id="day" name="pass_day">
+                        </div>
+                        <div class="form-group">
+                        <label for="month" class="control-label">Month:</label>
+                        <input type="text" class="form-control" id="month" name="pass_month">
+                        </div>
+                        <div class="form-group">
+                        <label for="dayofmonth" class="control-label">Day of Week:</label>
+                        <input type="text" class="form-control" id="dayofweek" name="pass_dayofweek">
+                        </div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <input class="btn btn-secondary" type="submit" name="submit_button" value="Confirm">
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+        <!-- This script allows values to be populated from table onclick to the reschedulejob-modal -->
+        <script>
+        $('#reschedulejob-modal').on('show.bs.modal', function(e) {
+          var idvalue = e.relatedTarget.dataset.id;
+          $('#hidden_id_input').val(idvalue)
+          var namevalue = e.relatedTarget.dataset.name;
+          $('#name').val(namevalue)
+          var emailvalue = e.relatedTarget.dataset.email;
+          $('#email').val(emailvalue)
+          var notifyvalue = e.relatedTarget.dataset.notify;
+          $('#notify').val(notifyvalue)
+          var minutevalue = e.relatedTarget.dataset.minute;
+          $('#minute').val(minutevalue)
+          var hourvalue = e.relatedTarget.dataset.hour;
+          $('#hour').val(hourvalue)
+          var dayvalue = e.relatedTarget.dataset.day;
+          $('#day').val(dayvalue)
+          var monthvalue = e.relatedTarget.dataset.month;
+          $('#month').val(monthvalue)
+          var dayofweekvalue = e.relatedTarget.dataset.dayofweek;
+          $('#dayofweek').val(dayofweekvalue)
+        });
+        </script>
+
+                        <!-- Modal for Delete job popup-->
+                        <div class="modal" tabindex="-1" role="dialog" id="deletejob-modal">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Confirm</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>Are you sure you want to delete this job?</p>
+                              </div>
+                              <div class="modal-footer align-items-start">
+                                <form action="{{ url_for('schedule.delete_job') }}" method="POST">
+                                <input name="pass_deleteid" type="hidden" value="pass_value" id="hidden_del">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <input class="btn btn-secondary" type="submit" name="submit_button" value="Confirm">
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- This script allows value of id to be passed from button onclick to the delete job modal -->
+                        <script>
+                           $('#deletejob-modal').on('show.bs.modal', function(e) {
+                           var idvalue = e.relatedTarget.dataset.id;
+                           $('#hidden_del').val(idvalue)
+                           });
+                        </script>
+
+
+                        <!-- Modal for Admin login -->
+                        <div class="modal fade" id="admin_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header text-center">
+                              <h4 class="modal-title w-100 font-weight-bold">Admin Login</h4>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <form action="{{ url_for('admin.admin_index') }}" method="POST" id="adminform">
+                            <div class="modal-body mx-3">
+                              <div class="md-form mb-5">
+                                 <i class="fas fa-user prefix grey-text"></i>
+                                <input type="username" name="username" id="username" placeholder="Admin username">
+                              </div>
+
+                              <div class="md-form mb-4">
+                                  <i class="fas fa-lock prefix grey-text"></i>
+                                  <input type="password" name="password" id="password" placeholder="Admin password">
+                              </div>
+
+                            </div>
+                            <div class="modal-footer d-flex justify-content-center">
+                              <input class="btn btn-secondary" type="submit" name="submit_button" value="Login">
+                            </div>
+                          </form>
+                          </div>
+                        </div>
+                      </div>
+
+                      {% if show_admin_modal %}
+                      <!-- Modal for Admin login called upon redirect-->
+                      <div class="modal fade" id="admin-modal-redirect" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                      aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header text-center">
+                            <h4 class="modal-title w-100 font-weight-bold">Admin Login</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <form action="{{ url_for('admin.admin_index') }}" method="POST" id="adminform">
+                          <div class="modal-body mx-3">
+                            <div class="md-form mb-5">
+                               <i class="fas fa-user prefix grey-text"></i>
+                              <input type="username" name="username" id="username" placeholder="Admin username">
+                            </div>
+
+                            <div class="md-form mb-4">
+                                <i class="fas fa-lock prefix grey-text"></i>
+                                <input type="password" name="password" id="password" placeholder="Admin password">
+                            </div>
+
+                          </div>
+                          <div class="modal-footer d-flex justify-content-center">
+                            <input class="btn btn-secondary" type="submit" name="submit_button" value="Login">
+                          </div>
+                        </form>
+                        </div>
+                      </div>
+                      </div>
+
+                      <script>
+                          $(document).ready(function(){
+                              $("#admin-modal-redirect").modal('show');
+                          });
+                      </script>
+
+                      {% endif %}
+
+</body>
+
+</html>

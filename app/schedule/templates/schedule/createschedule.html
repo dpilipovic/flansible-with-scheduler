@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css" integrity="sha384-v2Tw72dyUXeU3y4aM2Y0tBJQkGfplr39mxZqlTBDUZAb9BGoC40+rdFCG0m10lXk" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/fontawesome.css" integrity="sha384-q3jl8XQu1OpdLgGFvNRnPdj5VIlCvgsDQTQB6owSOHWlAurxul7f+JpUOVdAiJ5P" crossorigin="anonymous">
+</head>
+<body>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <!-- <strong>Title</strong> --> {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <div>
+    <nav class="navbar navbar-dark bg-dark">
+      <img src="/static/images/Logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+      <a class="navbar-brand" href="{{url_for('restapi.register_api')}}">API</a>
+      <a class="navbar-brand" href="{{url_for('ui.runhistory')}}">Run History</a>
+      <a class="navbar-brand" href="{{url_for('ui.index')}}">Home</a>
+      <a class="navbar-brand" href="{{url_for('ui.logout')}}">Logout</a>
+    </nav>
+ </div>
+
+ <br>
+ <br>
+
+ <br>
+
+   <div>
+   <class="col-md-4">
+
+     <form name="newschedule" method="POST" action="{{ url_for('schedule.scheduleresult') }}">
+       <br />
+       <label for="op_id">Operation ID:</label>
+       <select class="selectpicker" name="op_id" method="GET" action="/">
+       <option value="{{idlist[0]}}" selected>{{idlist[0]}}</option>
+          {% for op_id in idlist[1:] %}
+          <option value="{{op_id}}">{{op_id}}</option>
+          {% endfor %}
+       </select>
+       <br />
+       <label for="name"><strong>Task Name:</strong></label>
+       <input name="minute" type="text" id="name"><br>
+       <label for="minute"><strong>Minute[0-59]:</strong></label>
+       <input name="minute" type="text" id="minute" value="30"><br>
+       <label for="hour"><strong>Hour[0-23]:</strong></label>
+       <input name="hour" type="text" id="hour" value="17"><br>
+       <label for="dayofmonth"><strong>Day of Month[1-31]:</strong></label>
+       <input name="dayofmonth" type="text" id="dayofmonth" value="*"><br>
+       <label for="month"><strong>Month[1-12]:</strong></label>
+       <input name="month" type="text" id="month" value="*"><br>
+       <label for="dayofweek"><strong>Day of Week[0-6]:</strong></label>
+       <input name="dayofweek" type="text" id="dayofweek" value="*"><br>
+       <label for="emails"><strong>Email address:</strong></label>
+       <input name="emails" type="text" id="emails"><br>
+       <label><input type="checkbox" class="notification" name="notify" value="False"><strong>Receive emails with logs when schedule executes?</strong></label><br>
+       <a data-toggle="modal" class="btn btn-primary" value="btn_display_value" data-target="#confirm-modal">Create Schedule</a> &nbsp;
+     </form>
+   </div>
+
+   <br>
+   <br>
+   <br>
+   <br>
+
+ <p>
+ Scheduler uses the unix cronjob like synthax.<br>
+ The following table lists all the available expressions for use in the fields from minute to day of week.<br>
+ Multiple expression can be given in a single field, separated by commas.<br>
+ Day of Week also takes values: mon,tue,wed,thu,fri,sat,sun.<br>
+ Month also takes values: jan - dec.<br>
+ </p>
+
+ <br>
+ <br>
+ <br>
+ <br>
+
+
+ <div>
+ <table class="table table-striped">
+      <tr class="Header">
+         <th>Expression</th>
+         <th>Field</th>
+         <th>Description</th>
+       </tr>
+
+       <tr>
+         <td> * </td>
+         <td> any </td>
+         <td> Fire on every value </td>
+       </tr>
+
+       <tr>
+         <td> */a </td>
+         <td> any </td>
+         <td> Fire every a values, starting from the minimum </td>
+       </tr>
+
+       <tr>
+         <td> a-b </td>
+         <td> any </td>
+         <td> Fire on any value within the a-b range (a must be smaller than b) </td>
+       </tr>
+
+       <tr>
+         <td> a-b/c </td>
+         <td> any </td>
+         <td> Fire every c values within the a-b range </td>
+       </tr>
+
+       <tr>
+         <td> x,y,z </td>
+         <td> any </td>
+         <td> Fire on any matching expression; can combine any number of any of the above expressions </td>
+       </tr>
+  </table>
+
+   <div>
+     <nav class="navbar fixed-bottom navbar-dark bg-dark">
+       <span class="navbar-text">
+       {{ company_info }} All rights reserved.
+       </span>
+      </nav>
+   </div>
+
+   <!-- Modal to Confirm creation of new scheduled task-->
+   <div class="modal" tabindex="-1" role="dialog" id="confirm-modal">
+     <div class="modal-dialog" role="document">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title">Confirm</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+           </button>
+         </div>
+         <div class="modal-body">
+           <p>Are you sure you want to create Scheduled task? It will execute per selected schedule!</p>
+         </div>
+         <div class="modal-footer align-items-start">
+           <form action="{{ url_for('schedule.scheduleresult') }}" method="POST">
+           <input name="op_id" type="hidden" value="pass_value" id="hidden_id_input">
+           <input name="name" type="hidden" value="pass_value" id="hidden_name_input">
+           <input name="minute" type="hidden" value="pass_value" id="hidden_min_input">
+           <input name="hour" type="hidden" value="pass_value" id="hidden_hour_input">
+           <input name="dayofmonth" type="hidden" value="pass_value" id="hidden_day_input">
+           <input name="month" type="hidden" value="pass_value" id="hidden_month_input">
+           <input name="dayofweek" type="hidden" value="pass_value" id="hidden_dayweek_input">
+           <input name="emails" type="hidden" value="pass_value" id="hidden_emails_input">
+           <input name="notify" type="hidden" value="pass_value" id="hidden_notify_input">
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+           <input class="btn btn-secondary" type="submit" name="submit_button" value="Confirm">
+           </form>
+         </div>
+       </div>
+     </div>
+   </div>
+
+
+   <!-- This script allows values inputed at create schedule page to be passed through confirm modal to the next python view function -->
+   <script>
+   $('#confirm-modal').on('show.bs.modal', function(e) {
+     var op_idvalue = $(".selectpicker").val();
+     $('#hidden_id_input').val(op_idvalue)
+     $('#hidden_name_input').val($('#name').val());
+     $('#hidden_min_input').val($('#minute').val());
+     $('#hidden_hour_input').val($('#hour').val());
+     $('#hidden_day_input').val($('#dayofmonth').val());
+     $('#hidden_month_input').val($('#month').val());
+     $('#hidden_dayweek_input').val($('#dayofweek').val());
+     $('#hidden_emails_input').val($('#emails').val());
+     var notify_value = ($('.notification').is(':checked'));
+     $('#hidden_notify_input').val(notify_value);
+   });
+   </script>
+
+</body>
+</html>

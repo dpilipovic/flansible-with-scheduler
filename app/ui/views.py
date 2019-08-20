@@ -35,7 +35,7 @@ def login():
               login_user(form.user)
               # Successfully logged in, We can now access the saved user object via form.user.
               name = str(form.user).split(',')[0][3:]
-              app.logger.info('%s succesfully logged in!', name) # Log who logged in
+              log.info('%s succesfully logged in!', name) # Log who logged in
               next = request.args.get('next')
               # is_safe_url from __init__.py should check if the url is safe for redirects.
               # See http://flask.pocoo.org/snippets/62/ for an example.
@@ -45,11 +45,11 @@ def login():
           else:
               error = True
               name = str(form.username.data)
-              app.logger.warn('Invalid login attempt by user: %s !', name)
+              app.logger.warning('Invalid login attempt by user: %s !', name)
               return render_template('login.html', form=form, error=error)
       else:
           name = str(form.username.data)
-          app.logger.warn('Invalid login attempt by user: %s', name)
+          app.logger.warning('Invalid login attempt by user: %s', name)
           return render_template('login.html', form=form)
 
 @ui_blueprint.route('/', methods=['GET', 'POST'])
@@ -76,7 +76,7 @@ def run():
         try:
             test_ssh(cmd)
         except ValueError as e:
-            app.logger.error('ERROR: %s ', str(e))
+            log.error('ERROR: %s ', str(e))
             flash('{}'.format(str(e)), 'danger')
             return redirect(url_for('ui.index'))
         else:
@@ -84,8 +84,8 @@ def run():
             runlog = os.path.join("ansible-ui-runlog-" + id + "-" + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S-') + (tz.tzname()) + ".log")
             session['runlog'] = runlog
             runlog_path = os.path.join(app.config['APP_PATH'], "logs", runlog)
-            app.logger.info('%s executed playbook with id: %s', str(current_user).split(',')[0][3:], id)
-            app.logger.info('created playbook runlog file %s', runlog)
+            log.info('%s executed playbook with id: %s', str(current_user).split(',')[0][3:], id)
+            log.info('created playbook runlog file %s', runlog)
             data = run_ssh_ui(cmd, runlog_path)
         return Response(stream_with_context(stream_template('run.html', data=data)), mimetype='text/html')
 
@@ -93,7 +93,7 @@ def run():
 @login_required
 def download():
     runlog = session.get('runlog', None)
-    app.logger.info('%s downloaded runlog file %s', str(current_user).split(',')[0][3:], runlog)
+    log.info('%s downloaded runlog file %s', str(current_user).split(',')[0][3:], runlog)
     return send_from_directory(directory=os.path.join(app.config['APP_PATH'], "logs"), filename=runlog, as_attachment=True)
 
 @ui_blueprint.route('/email', methods=['GET', 'POST'])
@@ -104,10 +104,10 @@ def email():
     try:
         send_email_ui(recipient_email, runlog)
     except Exception as e:
-        app.logger.error('Mail to recipients %s failed because of %s', recipient_email, (str(e)))
+        log.error('Mail to recipients %s failed because of %s', recipient_email, (str(e)))
         flash('Mail failed: {}'.format(str(e)), 'danger')
     else:
-        app.logger.info('%s emailed runlog file %s to recipients : %s', str(current_user).split(',')[0][3:], runlog, recipient_email)
+        log.info('%s emailed runlog file %s to recipients : %s', str(current_user).split(',')[0][3:], runlog, recipient_email)
         flash('Email sent succesfully', 'info')
     finally:
         return redirect(url_for('ui.index'))
@@ -115,7 +115,7 @@ def email():
 @ui_blueprint.route('/logout', methods=['POST', 'GET'])
 @login_required
 def logout():
-    app.logger.info('user %s succesfully logged out!', str(current_user).split(',')[0][3:]) # Log who logged out
+    log.info('user %s succesfully logged out!', str(current_user).split(',')[0][3:]) # Log who logged out
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('ui.login'))

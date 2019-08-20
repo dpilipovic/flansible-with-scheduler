@@ -39,6 +39,11 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 from app.database.createdb import db
 from app.database.models import User
 
+""" Import celery which was created in createscheduler.py """
+from app.schedule.createscheduler import make_celery
+# Celery
+celery = make_celery(app)
+
 """ LDAP stuff """
 login_manager = LoginManager(app)              # Setup a Flask-Login Manager
 ldap_manager = LDAP3LoginManager(app)          # Setup a LDAP3 Login Manager.
@@ -116,7 +121,9 @@ def make_session_permanent():
 from app.ui.views import ui_blueprint
 from app.admin.views import admin_blueprint
 from app.restapi.views import restapi_blueprint
+from app.schedule.views import schedule_blueprint
 
 app.register_blueprint(ui_blueprint)
 app.register_blueprint(admin_blueprint, url_prefix='/admin')
 app.register_blueprint(restapi_blueprint)
+app.register_blueprint(schedule_blueprint)

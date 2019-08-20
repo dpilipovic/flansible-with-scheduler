@@ -48,11 +48,11 @@ def regresult():
         user_count = Apiusers.query.filter_by(ldap_user=str(current_user).split(',')[0][3:]).count()
         if exists:
             flash('Username is already in use %s' % _user, 'danger')
-            app.logger.error('Username is already in use %s' % _user)
+            log.error('Username is already in use %s' % _user)
             return render_template("register.html", company_info=company_info)
         elif user_count >= int(app.config['MAX_APIUSERS']):
             flash('User %s has already registered maximum number of allowed API users.' % str(current_user).split(',')[0][3:], 'danger')
-            app.logger.error('User %s has already registered maximum number of allowed API users.' % str(current_user).split(',')[0][3:])
+            log.error('User %s has already registered maximum number of allowed API users.' % str(current_user).split(',')[0][3:])
             return render_template("register.html", company_info=company_info)
         else:
             password = (''.join([random.choice(list('123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM'))for x in range(8)]))
@@ -62,9 +62,9 @@ def regresult():
             record = Apiusers(username=_user, email=_email, notify=_notify, password_hash=_password_hash, ldap_user=_ldap_user)
             db.session.add(record)
             db.session.commit()
-            app.logger.info('Created new API user: %s with email address %s and notification set to %s. It belongs to User: %s', _user, _email, bool(_notify), str(current_user).split(',')[0][3:])
+            log.info('Created new API user: %s with email address %s and notification set to %s. It belongs to User: %s', _user, _email, bool(_notify), str(current_user).split(',')[0][3:])
         except Exception as e:
-            app.logger.error('ERROR: %s ', str(e))
+            log.error('ERROR: %s ', str(e))
             flash('{}'.format(str(e)), 'danger')
             return render_template("register.html", company_info=company_info)
     return render_template("regresult.html", password=password, _user=_user, api_endpoints=api_endpoints, company_info=company_info, app_url=app_url)
@@ -80,7 +80,7 @@ def user_reset():
     item = Apiusers.query.filter_by(username=_user, ldap_user=_ldap_user).all()
     if not item:
         flash("API user %s doesn't exist, or doesn't belong to you." % _user, 'danger')
-        app.logger.error("Invalid user reset password attempt. API user %s doesn't exist, or doesn't belong to %s", _user, _ldap_user)
+        log.error("Invalid user reset password attempt. API user %s doesn't exist, or doesn't belong to %s", _user, _ldap_user)
         return render_template("register.html", company_info=company_info)
     else:
         try:
@@ -89,12 +89,12 @@ def user_reset():
             for i in item:
                 i.password_hash = _password_hash
             db.session.commit()
-            app.logger.info('%s has reset a password for API user %s!', _ldap_user, _user)
+            log.info('%s has reset a password for API user %s!', _ldap_user, _user)
             flash('API user: %s password has been reset!' % _user, 'info')
             return render_template("regresult.html", password=password, _user=_user, api_endpoints=api_endpoints, company_info=company_info, app_url=app_url)
         except Exception as e:
             db.session.rollback()
-            app.logger.error('ERROR: %s ', str(e))
+            log.error('ERROR: %s ', str(e))
             flash('{}'.format(str(e)), 'danger')
             return render_template("register.html", company_info=company_info)
 
