@@ -105,7 +105,10 @@ RUN  bash && \
 
 # Obtain Application code
 RUN cd /opt/ && \
-    git clone https://github.com/dpilipovic/flansible-with-scheduler.git flansible
+    git clone https://github.com/dpilipovic/flansible-with-scheduler.git flansible && \
+    addgroup flansible && \ 
+    adduser flansible -s /bin/bash -G flansible -D && \
+    chown -R flansible:flansible /opt/flansible
     
 # Setup Python3 and it's pip as default and create venv
 RUN python -m ensurepip --default-pip && \
@@ -113,6 +116,7 @@ RUN python -m ensurepip --default-pip && \
 
 # Install requirements
 RUN cd /opt/flansible/ && \
+     su flansible && \
      python -m venv venv && \
      venv/bin/pip install -r requirements.txt
 
@@ -132,6 +136,8 @@ RUN mkdir -p /etc/nginx/certs && \
 
 # Few more small changes for Docker Alpine release to function a ok. tzlocal python library requires /etc/localtime and we want alpine version of startup script which solves docker network routing
 RUN cp -r -f /usr/share/zoneinfo/UTC /etc/localtime && \
+    echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf && \
+    echo never > /sys/kernel/mm/transparent_hugepage/enabled && \
     cp -r -f /opt/flansible/bin/start-flansible-alpine.sh /opt/flansible/bin/start-flansible.sh &&\
     chmod u+x /opt/flansible/bin/start-flansible.sh && chmod 600 /opt/flansible/app/id_rsa && \
     chmod u+x /opt/flansible/bin/start-docker-services.sh
