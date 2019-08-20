@@ -28,7 +28,7 @@ RUN apk add --no-cache --virtual .build-deps \
     openssl \
     tzdata \
     # OS tools we also need
-    jw \
+    jq \
     tree
 
 # Download nginx and sticky module sources
