@@ -1,4 +1,5 @@
-FROM python:alpine
+FROM python:3.6-alpine
+# We need python3.6 rather than latest due to Celery4.2 bug with python3.7.4 see details here: https://github.com/celery/celery/issues/4849
 # Dockerfile to run both nginx as well as gunicorn UWSGI server which connects to Flask app
 # Could be easily split into two containers with docker-compose file
 # For latest build deps, see https://github.com/nginxinc/docker-nginx/blob/master/mainline/alpine/Dockerfile
