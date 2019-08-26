@@ -36,11 +36,11 @@ There are no separate privilege levels between users, meaning that all authorize
 
 # Diagram:
 
-![alt text](https://github.com/dpilipovic/flansible/blob/master/images/Flansible1.png)
+![alt text](https://github.com/dpilipovic/flansible-with-scheduler/blob/master/images/Flansible1.png)
 
 # DB schema:
 
-![alt text](https://github.com/dpilipovic/flansible/blob/master/images/DBschema-flansible+scheduler.png)
+![alt text](https://github.com/dpilipovic/flansible-with-scheduler/blob/master/images/DBschema-flansible+scheduler.png)
 
 
 # Table of contents:
