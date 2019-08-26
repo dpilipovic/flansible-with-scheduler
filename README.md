@@ -40,7 +40,7 @@ There are no separate privilege levels between users, meaning that all authorize
 
 # DB schema:
 
-![alt text](https://github.com/dpilipovic/flansible-with-scheduler/blob/master/images/DBschema.png)
+![alt text](https://github.com/dpilipovic/flansible-with-scheduler/blob/master/images/DBschema1.png)
 
 
 # Table of contents:
