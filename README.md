@@ -5,7 +5,9 @@ I ❤ Ansible a lot. Like a lot.
 
 I also ❤ Flask. 
 
-So once the need and opportunity came up I've decided to create my own Flask powered Ansible UI and API.
+So once the need and opportunity came up I've decided to create my own Flask powered Ansible UI API and Scheduler.
+
+Note - if you just need UI and API functionality - see simpler version of the app here: https://github.com/dpilipovic/flansible
 
 Main idea behind it was to popularize use of Ansible for automation tasks within my place of employment. 
 
@@ -35,6 +37,11 @@ There are no separate privilege levels between users, meaning that all authorize
 # Diagram:
 
 ![alt text](https://github.com/dpilipovic/flansible/blob/master/images/Flansible1.png)
+
+# DB schema:
+
+![alt text](https://github.com/dpilipovic/flansible/blob/master/images/DBschema-flansible+scheduler.png)
+
 
 # Table of contents:
 
