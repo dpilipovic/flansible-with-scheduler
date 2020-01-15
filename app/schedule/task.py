@@ -62,7 +62,7 @@ def exec_scheduled_job(_name, _op_id, email, ldap_user):
 
 def remove_old_runlogs():
   """ Function that removes old runlogs"""
-  path = "/opt/app/Zanother_celer/flansible/app/logs"
+  path = os.path.join(APP_PATH, "logs")
   now = time.time()
   for f in os.listdir(path):
     f = os.path.join(path, f)
