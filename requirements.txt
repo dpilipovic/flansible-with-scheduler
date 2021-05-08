@@ -12,7 +12,7 @@ croniter==0.3.30
 cryptography==2.4.2
 dnspython==1.16.0
 dominate==2.3.5
-eventlet==0.24.1
+eventlet==0.31.0
 Flask==1.0.2
 Flask-Bootstrap==3.3.7.1
 Flask-JWT==0.3.2
