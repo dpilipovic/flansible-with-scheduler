@@ -30,7 +30,7 @@ itsdangerous==1.1.0
 Jinja2==2.10.1
 kombu==4.2.2.post1
 ldap3==2.5.1
-Mako==1.0.12
+Mako==1.2.2
 MarkupSafe==1.1.0
 monotonic==1.5
 paramiko==2.4.2
